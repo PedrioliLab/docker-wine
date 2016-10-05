@@ -11,8 +11,8 @@ LABEL Description="A basic wine container with support for X11 forwarding and us
 ENV DEBIAN_FRONTEND noninteractive
 
 ## Make sure image is up-to-date
-# RUN apt-get update \
-#     && apt-get -y upgrade
+RUN apt-get update \
+    && apt-get -y upgrade
 
 
 ##############
