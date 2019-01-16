@@ -2,17 +2,18 @@
 # OS setup #
 ############
 
-FROM ubuntu:14.04
+FROM ubuntu:18.04
 
 MAINTAINER Patrick Pedrioli
-LABEL Description="A basic wine container with support for X11 forwarding and user matching between host-image" Version="1.0"
+LABEL Description="A basic wine container with support for X11 forwarding and user matching between host-image" Version="1.1"
 
 ## Let apt-get know we are running in noninteractive mode
 ENV DEBIAN_FRONTEND noninteractive
 
 ## Make sure image is up-to-date
 RUN apt-get update \
-    && apt-get -y upgrade
+    && apt-get -y upgrade \
+    && apt-get -y install wget gnupg
 
 
 ##############
@@ -23,8 +24,11 @@ RUN apt-get update \
 RUN dpkg --add-architecture i386
 
 ## Add wine repository
+RUN wget -nc https://dl.winehq.org/wine-builds/winehq.key
+RUN apt-key add winehq.key
+RUN wget -qO- https://dl.winehq.org/wine-builds/Release.key | apt-key add -
 RUN apt-get -y install software-properties-common \
-    && add-apt-repository ppa:wine/wine-builds \
+    && add-apt-repository 'deb http://dl.winehq.org/wine-builds/ubuntu/ bionic main' \
     && apt-get update
 
 
@@ -58,7 +62,7 @@ RUN set -x \
 
 
 ENV USER_ID 9001
-ENV GROUP_ID 250
+ENV GROUP_ID 255361
 RUN addgroup --gid $GROUP_ID userg
 RUN useradd --shell /bin/bash -u $USER_ID -g $GROUP_ID -o -c "" -m user
 ENV HOME /home/user
